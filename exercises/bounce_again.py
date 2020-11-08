@@ -3,6 +3,7 @@ from pygame.locals import *
 import sys
 from exercises.keyboard_handler import KeyboardHandler
 import random
+from exercises.bubble import Bubble, Box
 
 
 class Game:
@@ -15,14 +16,12 @@ class Game:
         pygame.init()
 
         # Below this line are the variables and objects fo the animation
-        self.x = 100
-        self.y = 100
-        self.dx = random.uniform(-2, 2)
-        self.dy = random.uniform(-2, 2)
         self.size = [800, 800]
-        self.box = [100, 100, 600, 600]
-        self.diameter = 50
-        self.color = (250, 50, 50)
+        self.diameter = 50;
+        self.balls = [];
+        for i in range(10):
+            self.balls.append(Bubble(200, 200, (random.randrange(0,255), self.diameter, self.diameter)))
+        self.box = Box(100,100,600,600,self.size[0],self.size[1])
 
         # Loads a random system font
         self.font = pygame.font.SysFont(pygame.font.get_fonts()[0], 24)
@@ -55,44 +54,12 @@ class Game:
 
     def update_game(self, dt):
         # code to update the position
-        self.x += self.dx
-        self.y += self.dy
-        if self.x < self.box[0] and self.dx < 0:
-            self.dx = - self.dx
-        if self.y < self.box[1] and self.dy < 0:
-            self.dy = - self.dy
-        if self.x > self.box[0] + self.box[2] - self.diameter and self.dx > 0:
-            self.dx = - self.dx
-        if self.y > self.box[1] + self.box[3] - self.diameter and self.dy > 0:
-            self.dy = - self.dy
-
-        # code to change position of the box
-        if K_UP in self.keyboard_handler.pressed:
-            if self.box[1] > 0:
-                self.box[1] -= 1
-        if K_DOWN in self.keyboard_handler.pressed:
-            if self.box[1] + self.box[3] < self.size[1]:
-                self.box[1] += 1
-        if K_LEFT in self.keyboard_handler.pressed:
-            if self.box[0] > 0:
-                self.box[0] -= 1
-        if K_RIGHT in self.keyboard_handler.pressed:
-            if self.box[0] + self.box[2] < self.size[0]:
-                self.box[0] += 1
-
-        # code to change th sie of the box
-        if K_a in self.keyboard_handler.pressed:
-            if self.box[2] > self.diameter:
-                self.box[2] -= 1
-        if K_w in self.keyboard_handler.pressed:
-            if self.box[3] > self.diameter:
-                self.box[3] -= 1
-        if K_d in self.keyboard_handler.pressed:
-            if self.box[0] + self.box[2] < self.size[0]:
-                self.box[2] += 1
-        if K_s in self.keyboard_handler.pressed:
-            if self.box[1] + self.box[3] < self.size[0]:
-                self.box[3] += 1
+        for b in self.balls:
+            b.move(self.box)
+            for b2 in self.balls:
+                b.collide(b2)
+        # code to change position and size of the box
+        self.box.update(self.keyboard_handler.pressed,self.diameter)
 
 
     """
@@ -105,12 +72,11 @@ class Game:
     def draw_components(self):
         # fill the screen and draw the rectangle in it
         self.screen.fill([255, 255, 255])
-        #draw the box
-        pygame.draw.rect(self.screen, (100, 100, 100), self.box)
+        self.box.display(self.screen)
         # draw ball
-        pygame.draw.ellipse(self.screen, self.color, [[self.x, self.y], [self.diameter, self.diameter]])
-        text = self.font.render("!", True, (255, 255, 255))
-        self.screen.blit(text, (self.x + 22, self.y + 12))
+        for b in self.balls:
+            b.display(self.screen, self.font)
+
 
         # updates the entire surface (canvas). Keep it.
         pygame.display.flip()
@@ -145,7 +111,6 @@ class Game:
 
     def handle_key_down(self, event):
         self.keyboard_handler.key_pressed(event.key)
-
 
     """This method will remove a released button 
         from list 'keyboard_handler.pressed'."""
