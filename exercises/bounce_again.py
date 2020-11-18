@@ -6,6 +6,7 @@ import random
 from exercises.bubble import Bubble
 from exercises.box import Box
 
+
 class Game:
     """
     Initialize PyGame and create a graphical surface to write. Similar
@@ -20,8 +21,8 @@ class Game:
         self.diameter = 50;
         self.balls = [];
         for i in range(10):
-            self.balls.append(Bubble(200, 200, (random.randrange(0,255), self.diameter, self.diameter)))
-        self.box = Box(100,100,600,600,self.size[0],self.size[1])
+            self.balls.append(Bubble(200, 200, (random.randrange(0, 255), self.diameter, self.diameter)))
+        self.box = Box(100, 100, 600, 600, self.size[0], self.size[1])
 
         # Loads a random system font
         self.font = pygame.font.SysFont(pygame.font.get_fonts()[0], 24)
@@ -59,8 +60,7 @@ class Game:
             for b2 in self.balls:
                 b.collide(b2)
         # code to change position and size of the box
-        self.box.update(self.keyboard_handler.pressed,self.diameter)
-
+        self.box.update(self.keyboard_handler.pressed, self.diameter)
 
     """
     Method 'draw_components' is similar is meant to contain 
@@ -76,7 +76,6 @@ class Game:
         # draw ball
         for b in self.balls:
             b.display(self.screen, self.font)
-
 
         # updates the entire surface (canvas). Keep it.
         pygame.display.flip()
