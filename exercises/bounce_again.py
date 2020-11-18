@@ -3,8 +3,8 @@ from pygame.locals import *
 import sys
 from exercises.keyboard_handler import KeyboardHandler
 import random
-from exercises.bubble import Bubble, Box
-
+from exercises.bubble import Bubble
+from exercises.box import Box
 
 class Game:
     """
